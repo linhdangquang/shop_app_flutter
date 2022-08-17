@@ -35,7 +35,7 @@ class ProductItem extends StatelessWidget {
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
                         backgroundColor:
-                            Theme.of(context_2).colorScheme.secondary,
+                            Theme.of(context).colorScheme.secondary,
                         textColor: Colors.white,
                         fontSize: 16.0);
                   },
@@ -49,14 +49,25 @@ class ProductItem extends StatelessWidget {
             trailing: IconButton(
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
-                Fluttertoast.showToast(
-                    msg: '${product.title} added to cart',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
+                // Fluttertoast.showToast(
+                //     msg: '${product.title} added to cart',
+                //     toastLength: Toast.LENGTH_SHORT,
+                //     gravity: ToastGravity.BOTTOM,
+                //     timeInSecForIosWeb: 1,
+                //     backgroundColor: Theme.of(context).colorScheme.primary,
+                //     textColor: Colors.white,
+                //     fontSize: 16.0);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('${product.title} added to cart'),
+                  duration: const Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ));
               },
               icon: const Icon(Icons.shopping_cart),
               color: Theme.of(context).colorScheme.secondary,
