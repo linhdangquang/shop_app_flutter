@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
@@ -20,6 +21,45 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isLoading = false;
+  // final _isInit = true;
+
+  @override
+  void initState() {
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts()
+        .then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      print(error);
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
+
+  // @override
+  // void didChangeDependencies() async {
+  //   if (_isInit) {
+  //     try {
+  //       setState(() => _isLoading = true);
+  //       await Provider.of<Products>(context, listen: false)
+  //           .fetchAndSetProducts();
+  //     } catch (e) {
+  //       print(e);
+  //     } finally {
+  //       setState(() => _isLoading = false);
+  //     }
+  //   }
+  //   super.didChangeDependencies();
+  // }
+
   @override
   Widget build(BuildContext context) {
     // final cart = Provider.of<Cart>(context);
@@ -60,9 +100,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGrid(
-        showOnlyFavorites: _showOnlyFavorites,
-      ),
+      body: _isLoading
+          ? const Center(
+              child: LinearProgressIndicator(
+                minHeight: 10,
+              ),
+            )
+          : ProductsGrid(
+              showOnlyFavorites: _showOnlyFavorites,
+            ),
     );
   }
 }

@@ -6,6 +6,26 @@ import 'package:shop_app/providers/product.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
+  Future<void> _changeFavoriteStatus(
+      BuildContext context, Product product) async {
+    Provider.of<Product>(context, listen: false)
+        .toggleFavoriteStatus()
+        .then((value) {
+      Fluttertoast.showToast(
+          msg:
+              '${product.title} is ${product.isFavorite ? 'added' : 'removed'} to favorites',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }).catchError((error) {
+      Fluttertoast.showToast(
+          msg: 'An error occurred while changing favorite status.');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
@@ -26,19 +46,7 @@ class ProductItem extends StatelessWidget {
                 // print(Theme.of(context).colorScheme.secondary);
                 // print(Theme.of(context_2).colorScheme.secondary);
                 return IconButton(
-                  onPressed: () {
-                    product.toggleFavoriteStatus();
-                    Fluttertoast.showToast(
-                        msg:
-                            '${product.title} is ${product.isFavorite ? 'added' : 'removed'} to favorites',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondary,
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                  },
+                  onPressed: (() => _changeFavoriteStatus(context, product)),
                   icon: Icon(product.isFavorite
                       ? Icons.favorite
                       : Icons.favorite_border),
@@ -49,14 +57,6 @@ class ProductItem extends StatelessWidget {
             trailing: IconButton(
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
-                // Fluttertoast.showToast(
-                //     msg: '${product.title} added to cart',
-                //     toastLength: Toast.LENGTH_SHORT,
-                //     gravity: ToastGravity.BOTTOM,
-                //     timeInSecForIosWeb: 1,
-                //     backgroundColor: Theme.of(context).colorScheme.primary,
-                //     textColor: Colors.white,
-                //     fontSize: 16.0);
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('${product.title} added to cart'),

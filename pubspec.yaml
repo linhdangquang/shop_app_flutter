@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.17.0
   fluttertoast: ^8.0.9
   json_theme: ^4.0.0+8
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:
