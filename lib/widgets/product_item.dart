@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/product.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
-  Future<void> _changeFavoriteStatus(
-      BuildContext context, Product product) async {
+  Future<void> _changeFavoriteStatus(BuildContext context, Product product,
+      String token, String userId) async {
     Provider.of<Product>(context, listen: false)
-        .toggleFavoriteStatus()
+        .toggleFavoriteStatus(token, userId)
         .then((value) {
       Fluttertoast.showToast(
           msg:
@@ -29,6 +30,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     // final product = context.read<Product>();
     final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
@@ -46,7 +48,8 @@ class ProductItem extends StatelessWidget {
                 // print(Theme.of(context).colorScheme.secondary);
                 // print(Theme.of(context_2).colorScheme.secondary);
                 return IconButton(
-                  onPressed: (() => _changeFavoriteStatus(context, product)),
+                  onPressed: (() => _changeFavoriteStatus(
+                      context, product, authData.token, authData.userId)),
                   icon: Icon(product.isFavorite
                       ? Icons.favorite
                       : Icons.favorite_border),
@@ -77,9 +80,16 @@ class ProductItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(
+                product.imageUrl,
+              ),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
+import 'package:shop_app/widgets/convex_bottombar.dart';
 import 'package:shop_app/widgets/products_grid.dart';
 
 enum FilterOptions {
@@ -22,7 +23,6 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorites = false;
   var _isLoading = false;
-  // final _isInit = true;
 
   @override
   void initState() {
@@ -36,29 +36,12 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         _isLoading = false;
       });
     }).catchError((error) {
-      print(error);
       setState(() {
         _isLoading = false;
       });
     });
     super.initState();
   }
-
-  // @override
-  // void didChangeDependencies() async {
-  //   if (_isInit) {
-  //     try {
-  //       setState(() => _isLoading = true);
-  //       await Provider.of<Products>(context, listen: false)
-  //           .fetchAndSetProducts();
-  //     } catch (e) {
-  //       print(e);
-  //     } finally {
-  //       setState(() => _isLoading = false);
-  //     }
-  //   }
-  //   super.didChangeDependencies();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +83,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
+      bottomNavigationBar: const ConVexBottomBar(),
       body: _isLoading
           ? const Center(
               child: LinearProgressIndicator(
